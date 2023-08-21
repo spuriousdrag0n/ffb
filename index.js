@@ -31,11 +31,14 @@ async function saveSubject(subject) {
 }
 
 async function start() {
+    
     try {
         contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, protocolEthAmount, subjectEthAmount, supply) => {
              
 
+        console.log('Listening for Trade events...');
             if (ethAmount === 0n) {
+
                 // console.log('Trade Event:', {
                 //trader, subject, isBuy, shareAmount, ethAmount, protocolEthAmount, subjectEthAmount, supply
             //});
@@ -61,21 +64,25 @@ async function start() {
                     });
                     await tx.wait();
                     console.log('buyShares function called successfully.');
-                    start();
+                     await new Promise(resolve => setTimeout(resolve, 5000));
+                    
                 } catch (error) {
                     console.error('Error calling buyShares:', error);
-                    start();
+                     await new Promise(resolve => setTimeout(resolve, 5000));
+                     
                 }
             }
           
         });
 
-        console.log('Listening for Trade events...');
     } catch (error) {
         console.error('Error with RPC');
-        console.log('finished?')
-
+        await new Promise(resolve => setTimeout(resolve, 15000));
+        start(); 
     }
+  
+         
 }
 
 start();
+
