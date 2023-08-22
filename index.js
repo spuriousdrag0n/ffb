@@ -3,7 +3,25 @@ const { ethers } = require('ethers');
 const fs = require('fs');
 
 const rpc = 'https://base.meowrpc.com';
-const provider = new ethers.JsonRpcProvider(rpc);
+
+let provider;
+
+async function initializeProvider() {
+    while (true) {
+        try {
+            provider = new ethers.JsonRpcProvider(rpc);
+            console.log('Provider initialized successfully.');
+            break; // Exit the loop if initialization succeeds
+        } catch (error) {
+            console.error('Error initializing provider:', error);
+            console.log('Retrying in 20 seconds...');
+            await new Promise(resolve => setTimeout(resolve, 20000)); // Wait for 20 seconds before retrying
+        }
+    }
+}
+
+initializeProvider();
+
 
 const privateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(privateKey, provider);
@@ -38,7 +56,6 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
             const sharesSubject = subject;
             const amount = 1;
 
-            saveSubject(subject);
 
             try {
                 const txObject = {
@@ -56,6 +73,13 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
                 });
 
                 await tx.wait();
+
+             if (receipt.status === 1) {
+                    console.log('Transaction was successful.');
+                    saveSubject(subject); // Save subject if transaction is successful
+                } else {
+                    console.log('Transaction failed.');
+                }
                 console.log('buyShares function called successfully.');
                 await new Promise(resolve => setTimeout(resolve, 5000));
             } catch (error) {
