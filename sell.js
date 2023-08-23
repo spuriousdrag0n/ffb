@@ -30,10 +30,10 @@ async function start() {
                 if (subjectShares >= requiredBalance) {
                     const sellPriceAfterFee = await contract.getSellPriceAfterFee(address, amount);
                     console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
-                    if (sellPriceAfterFee >= 1000000000000000) {
+                    if (sellPriceAfterFee >= 56250000000001) {
                         try {
                             savedSubjects = savedSubjects.filter(subject => subject !== address);
-                            fs.writeFileSync('clean_subjects.json', JSON.stringify(savedSubjects, null, 2));
+                            fs.writeFileSync('clean_subject.json', JSON.stringify(savedSubjects, null, 2));
                             const transaction = await contract.sellShares(address, amount);
                             await transaction.wait();
                             console.log(`Sold shares for ${address}`);
@@ -45,7 +45,7 @@ async function start() {
                     }
                 } else {
                     savedSubjects = savedSubjects.filter(subject => subject !== address);
-                    fs.writeFileSync('clean_subjects.json', JSON.stringify(savedSubjects, null, 2));
+                    fs.writeFileSync('clean_subject.json', JSON.stringify(savedSubjects, null, 2));
                 }
             } catch (error) {
                 console.error(`Error calling sharesBalance for ${address}:`, error);
