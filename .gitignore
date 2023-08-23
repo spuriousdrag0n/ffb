@@ -1,3 +1,5 @@
 /node_modules
 package-lock.json
 .env
+clean_subjects.json
+saved_subjects.json

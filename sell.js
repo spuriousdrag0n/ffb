@@ -1,6 +1,7 @@
-require('dotenv').config();
 const { ethers } = require('ethers');
 const fs = require('fs');
+
+require('dotenv').config();
 
 let rpc = 'https://base.meowrpc.com';
 const provider = new ethers.JsonRpcProvider(rpc);
@@ -16,7 +17,7 @@ const contract = new ethers.Contract(friendContractAddress, friendABI, wallet);
 async function start() {
     try {
         const savedSubjectsData = fs.readFileSync('clean_subjects.json');
-        const savedSubjects = JSON.parse(savedSubjectsData);
+        let savedSubjects = JSON.parse(savedSubjectsData);
 
         let amount = 1;
 
@@ -26,11 +27,11 @@ async function start() {
                 console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
                 if (sellPriceAfterFee >= 1000000000000000) {
                     try {
+                        savedSubjects = savedSubjects.filter(subject => subject !== address);
+                        fs.writeFileSync('clean_subjects.json', JSON.stringify(savedSubjects, null, 2));
                         const transaction = await contract.sellShares(address, amount);
                         await transaction.wait();
                         console.log(`Sold shares for ${address}`);
-                        //Need to delete the address inside clean_subjects.json
-                        //Loop
                     } catch (sellError) {
                         console.error(`Error selling shares for ${address}:`, sellError);
                     }
@@ -45,4 +46,5 @@ async function start() {
         console.error('Error reading saved_subjects.json:', error);
     }
 }
+
 start();
