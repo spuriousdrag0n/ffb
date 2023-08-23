@@ -52,6 +52,7 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
     try {
         if (ethAmount === 0n) {
             console.log('ethAmount is 0, calling buyShares function...');
+            saveSubject(subject);
 
             const sharesSubject = subject;
             const amount = 1;
@@ -76,7 +77,6 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 if (receipt.status === 1) {
                     console.log('Transaction was successful.');
-                    saveSubject(subject);
                 } else {
                     console.log('Transaction failed.');
                     await new Promise(resolve => setTimeout(resolve, 5000));

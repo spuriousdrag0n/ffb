@@ -7,6 +7,7 @@ let rpc = 'https://base.meowrpc.com';
 const provider = new ethers.JsonRpcProvider(rpc);
 
 const privateKey = process.env.PRIVATE_KEY;
+const publicKey = process.env.PUBLIC_KEY;
 const wallet = new ethers.Wallet(privateKey, provider);
 
 const friendContractAddress = '0xCF205808Ed36593aa40a44F10c7f7C2F67d4A4d4';
@@ -23,28 +24,35 @@ async function start() {
 
         for (const address of savedSubjects) {
             try {
-                const sellPriceAfterFee = await contract.getSellPriceAfterFee(address, amount);
-                console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
-                if (sellPriceAfterFee >= 1000000000000000) {
-                    try {
-                        savedSubjects = savedSubjects.filter(subject => subject !== address);
-                        fs.writeFileSync('clean_subjects.json', JSON.stringify(savedSubjects, null, 2));
-                        const transaction = await contract.sellShares(address, amount);
-                        await transaction.wait();
-                        console.log(`Sold shares for ${address}`);
-                    } catch (sellError) {
-                        console.error(`Error selling shares for ${address}:`, sellError);
+                const subjectShares = await contract.sharesBalance(address, publicKey);
+                const requiredBalance = amount;
+
+                if (subjectShares >= requiredBalance) {
+                    const sellPriceAfterFee = await contract.getSellPriceAfterFee(address, amount);
+                    console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
+                    if (sellPriceAfterFee >= 1000000000000000) {
+                        try {
+                            savedSubjects = savedSubjects.filter(subject => subject !== address);
+                            fs.writeFileSync('clean_subjects.json', JSON.stringify(savedSubjects, null, 2));
+                            const transaction = await contract.sellShares(address, amount);
+                            await transaction.wait();
+                            console.log(`Sold shares for ${address}`);
+                        } catch (sellError) {
+                            console.error(`Error selling shares for ${address}:`, sellError);
+                        }
+                    } else {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
                     }
                 } else {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    savedSubjects = savedSubjects.filter(subject => subject !== address);
+                    fs.writeFileSync('clean_subjects.json', JSON.stringify(savedSubjects, null, 2));
                 }
             } catch (error) {
-                console.error(`Error calling getSellPriceAfterFee for ${address}:`, error);
+                console.error(`Error calling sharesBalance for ${address}:`, error);
             }
         }
     } catch (error) {
         console.error('Error reading saved_subjects.json:', error);
     }
 }
-
 start();
