@@ -15,7 +15,7 @@ const contract = new ethers.Contract(friendContractAddress, friendABI, wallet);
 
 async function start() {
     try {
-        const savedSubjectsData = fs.readFileSync('saved_subjects.json');
+        const savedSubjectsData = fs.readFileSync('clean_subjects.json');
         const savedSubjects = JSON.parse(savedSubjectsData);
 
         let amount = 1;
@@ -29,6 +29,8 @@ async function start() {
                         const transaction = await contract.sellShares(address, amount);
                         await transaction.wait();
                         console.log(`Sold shares for ${address}`);
+                        //Need to delete the address inside clean_subjects.json
+                        //Loop
                     } catch (sellError) {
                         console.error(`Error selling shares for ${address}:`, sellError);
                     }

@@ -11,11 +11,11 @@ async function initializeProvider() {
         try {
             provider = new ethers.JsonRpcProvider(rpc);
             console.log('Provider initialized successfully.');
-            break; // Exit the loop if initialization succeeds
+            break;
         } catch (error) {
             console.error('Error initializing provider:', error);
-            console.log('Retrying in 20 seconds...');
-            await new Promise(resolve => setTimeout(resolve, 20000)); // Wait for 20 seconds before retrying
+            console.log('Retrying in 5 seconds...');
+            await new Promise(resolve => setTimeout(resolve, 5000));
         }
     }
 }
@@ -60,7 +60,7 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
             try {
                 const txObject = {
                     to: friendContractAddress,
-                    value: 70000000000000,
+                    value: 69000000000000,
                     data: contract.interface.encodeFunctionData('buyShares', [sharesSubject, amount]),
                 };
 
@@ -68,15 +68,15 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
                 console.log(gasLimit);
 
                 const tx = await contract.buyShares(sharesSubject, amount, {
-                    value: 70000000000000,
-                    gasLimit: gasLimit,
+                    value: 69000000000000,
+                    gasLimit: gasLimit + 1000,
                 });
 
                 await tx.wait();
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 if (receipt.status === 1) {
                     console.log('Transaction was successful.');
-                    saveSubject(subject); // Save subject if transaction is successful
+                    saveSubject(subject);
                 } else {
                     console.log('Transaction failed.');
                     await new Promise(resolve => setTimeout(resolve, 5000));
