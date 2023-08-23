@@ -70,7 +70,7 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
 
                 const tx = await contract.buyShares(sharesSubject, amount, {
                     value: 69000000000000,
-                    gasLimit: gasLimit + BigInt(1000),
+                    gasLimit: gasLimit + BigInt(7000),
                 });
 
                 await tx.wait();

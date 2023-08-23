@@ -34,6 +34,7 @@ async function start() {
                         try {
                             savedSubjects = savedSubjects.filter(subject => subject !== address);
                             fs.writeFileSync('clean_subject.json', JSON.stringify(savedSubjects, null, 2));
+                            console.log('🔥 Selling for =>', sellPriceAfterFee.toString())
                             const transaction = await contract.sellShares(address, amount);
                             await transaction.wait();
                             console.log(`Sold shares for ${address}`);
