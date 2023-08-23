@@ -73,12 +73,13 @@ contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, prot
                 });
 
                 await tx.wait();
-
+                await new Promise(resolve => setTimeout(resolve, 10000));
              if (receipt.status === 1) {
                     console.log('Transaction was successful.');
                     saveSubject(subject); // Save subject if transaction is successful
                 } else {
                     console.log('Transaction failed.');
+              await new Promise(resolve => setTimeout(resolve, 5000));
                 }
                 console.log('buyShares function called successfully.');
                 await new Promise(resolve => setTimeout(resolve, 5000));
