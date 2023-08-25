@@ -20,11 +20,11 @@ async function start() {
         const events = await contract.queryFilter(filter, fromBlock, toBlock);
         events.forEach(event => {
             const traderAddress = event.args.trader;
-            console.log('Trader Address:', traderAddress);
+            console.log('Trader Address =>', traderAddress);
             const subjectAddress = event.args.subject;
-            console.log('Shares Subject:', subjectAddress);
+            console.log('Shares Subject =>', subjectAddress);
             const blockNumber = event.blockNumber;
-            console.log('Block Number:', blockNumber);
+            console.log('Block Number =>', blockNumber);
             if (traderAddress.toLowerCase() === publicKey.toLowerCase()) {
                 const jsonData = JSON.stringify(subjectAddress, null, 2);
                 fs.appendFileSync('recoveredSubjects.json', jsonData + ',\n');
@@ -42,13 +42,13 @@ async function start() {
                 fromBlock = toBlock + 1;
                 await new Promise(resolve => setTimeout(resolve, 1000));
             } catch (error) {
-                console.error('Error:', error);
-                console.log('Retrying in 5 seconds...');
+                console.error('Error =>', error);
+                console.log('TOO MANY REQUEST => Retrying in 5 seconds...');
                 await new Promise(resolve => setTimeout(resolve, 5000));
             }
         }
     } catch (error) {
-        console.error('TOO MANY REQUEST');
+        console.error('error');
     }
 }
 start();
