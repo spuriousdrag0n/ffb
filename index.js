@@ -31,7 +31,7 @@ const friendABI = require('./ABI/friendABI.json');
 
 const contract = new ethers.Contract(friendContractAddress, friendABI, wallet);
 
-const savedSubjectsFilePath = 'saved_subjects.json';
+const savedSubjectsFilePath = '../ffbdata/saved_subjects.json';
 
 async function saveSubject(subject) {
     try {
