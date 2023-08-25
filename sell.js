@@ -33,7 +33,12 @@ async function start() {
                     if (sellPriceAfterFee >= 56250000000001) {
                         try {
                             savedSubjects = savedSubjects.filter(subject => subject !== address);
+<<<<<<< HEAD
                             fs.writeFileSync('../ffb_data/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
+=======
+                            fs.writeFileSync('clean_subject.json', JSON.stringify(savedSubjects, null, 2));
+                            console.log('🔥 Selling for =>', sellPriceAfterFee.toString())
+>>>>>>> 35b32f5ded24be0c38e4c5576f7d122265c22b57
                             const transaction = await contract.sellShares(address, amount);
                             await transaction.wait();
                             console.log(`Sold shares for ${address}`);
