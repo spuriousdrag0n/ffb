@@ -17,7 +17,7 @@ const contract = new ethers.Contract(friendContractAddress, friendABI, wallet);
 
 async function start() {
     try {
-        const savedSubjectsData = fs.readFileSync('../ffb_data/cleansubject.json');
+        const savedSubjectsData = fs.readFileSync('../ffbdata/cleansubject.json');
         let savedSubjects = JSON.parse(savedSubjectsData);
 
         let amount = 1;
