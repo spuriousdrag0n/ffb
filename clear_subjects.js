@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const savedSubjectsFilePath = '../ffb_data/saved_subjects.json';
-const cleanedFilePath = '../ffb_data/clean_subject.json';
+const savedSubjectsFilePath = '../ffbdata/saved_subjects.json';
+const cleanedFilePath = '../ffbdata/clean_subject.json';
 
 function cleanDuplicates(subjects) {
     const uniqueSubjects = [...new Set(subjects)];
