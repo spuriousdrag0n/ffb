@@ -17,7 +17,7 @@ const contract = new ethers.Contract(friendContractAddress, friendABI, wallet);
 
 async function start() {
     try {
-        const savedSubjectsData = fs.readFileSync('../ffb_data/clean_subject.json');
+        const savedSubjectsData = fs.readFileSync('../ffb_data/cleansubject.json');
         let savedSubjects = JSON.parse(savedSubjectsData);
 
         let amount = 1;
@@ -30,7 +30,7 @@ async function start() {
                 if (subjectShares >= requiredBalance) {
                     const sellPriceAfterFee = await contract.getSellPriceAfterFee(address, amount);
                     console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
-                    if (sellPriceAfterFee >= 56250000000001) {
+                    if (sellPriceAfterFee >= 210000000000000) {
                         try {
                             savedSubjects = savedSubjects.filter(subject => subject !== address);
                             fs.writeFileSync('../ffb_data/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
