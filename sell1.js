@@ -22,6 +22,9 @@ async function start() {
 
         let amount = 1;
 
+        // Create an array to store promises for selling shares
+        const sellPromises = [];
+
         for (const address of savedSubjects) {
             try {
                 const subjectShares = await contract.sharesBalance(address, publicKey);
@@ -31,35 +34,30 @@ async function start() {
                     const sellPriceAfterFee = await contract.getSellPriceAfterFee(address, amount);
                     console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
                     if (sellPriceAfterFee >= 210000000000000) {
-                        try {
-                            savedSubjects = savedSubjects.filter(subject => subject !== address);
-                            fs.writeFileSync('../ffbdata/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
-                            console.log('🔥 Selling for =>', sellPriceAfterFee.toString())
-                            const transaction = await contract.sellShares(address, amount);
-                            await transaction.wait();
-                            console.log(`Sold shares for ${address}`);
-                        } catch (sellError) {
-                            console.error(`Error selling shares for ${address}:`, sellError);
-                        }
-                    } else if (sellPriceAfterFee < 110000000000000) {
-                        // If sellPriceAfterFee is 0, move the address to the end of the array
                         savedSubjects = savedSubjects.filter(subject => subject !== address);
-                        savedSubjects.push(address);
-                        fs.writeFileSync('../ffbdata/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
+                        console.log('🔥 Selling for =>', sellPriceAfterFee.toString())
+                        const sellPromise = contract.sellShares(address, amount);
+                        sellPromises.push(sellPromise);
                     } else {
                         await new Promise(resolve => setTimeout(resolve, 1000));
                     }
                 } else {
                     savedSubjects = savedSubjects.filter(subject => subject !== address);
-                    fs.writeFileSync('../ffbdata/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
                 }
             } catch (error) {
                 console.error(`Error calling sharesBalance for ${address}:`, error);
             }
         }
+
+        // Wait for all sell promises to complete
+        await Promise.all(sellPromises);
+
+        // Write the updated data back to the file
+        fs.writeFileSync('../ffbdata/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
     } catch (error) {
         console.error('Error reading saved_subjects.json:', error);
     }
 }
+
 start();
 

@@ -27,14 +27,14 @@ async function start() {
             console.log('Block Number =>', blockNumber);
             if (traderAddress.toLowerCase() === publicKey.toLowerCase()) {
                 const jsonData = JSON.stringify(subjectAddress, null, 2);
-                fs.appendFileSync('recoveredSubjects.json', jsonData + ',\n');
+                fs.appendFileSync('../ffbdata/recoveredSubjects.json', jsonData + ',\n');
             }
         });
     }
     try {
         const latestBlock = await provider.getBlockNumber();
         const batchSize = 1000;
-        let fromBlock = 2710000;
+        let fromBlock = 2837663 ;
         while (fromBlock < latestBlock) {
             try {
                 const toBlock = Math.min(fromBlock + batchSize - 1, latestBlock);
