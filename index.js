@@ -1,6 +1,7 @@
-require('dotenv').config();
 const { ethers } = require('ethers');
 const fs = require('fs');
+
+require('dotenv').config();
 
 const rpc = 'https://base.meowrpc.com';
 
@@ -46,16 +47,24 @@ async function saveSubject(subject) {
     }
 }
 
-const minEthBalance = 8000000000000000; // Minimum ETH balance required
+const initialMinEthBalance = 8000000000000000; // Initial minimum ETH balance
+const timestamp = 1694046917; // Timestamp when the script started
 
 async function checkBalanceAndBuy() {
     try {
+        const currentTime = Math.floor(Date.now() / 1000); // Current timestamp in seconds
+        const hoursElapsed = (currentTime - timestamp) / 3600; // Hours elapsed since the script started
+
+        // Calculate the updated minimum ETH balance with a 1% increase for every 24 hours
+        const minEthBalance = initialMinEthBalance * Math.pow(1.01, hoursElapsed / 24);
+
         const ethBalance = await provider.getBalance(wallet.address);
         console.log(`Ethereum balance for wallet: ${ethBalance.toString()}`);
+        console.log(`Minimum ETH balance required: ${minEthBalance}`);
 
-        if (ethBalance< minEthBalance) {
-           console.log('Ethereum balance is less than 0.008 ETH. Exiting the script.');
-           return; // Exit the script
+        if (ethBalance < minEthBalance) {
+            console.log('Ethereum balance is less than the required minimum. Exiting the script.');
+            return; // Exit the script
         }
 
         console.log('Listening for Trade events...');
