@@ -14,7 +14,7 @@ async function cleanAndSave() {
         if (fs.existsSync(savedSubjectsFilePath)) {
             const existingSubjects = JSON.parse(fs.readFileSync(savedSubjectsFilePath));
             const cleanedSubjects = cleanDuplicates(existingSubjects);
-            fs.writeFileSync(cleanedFilePath, JSON.stringify(cleanedSubjects, null, 2));
+            fs.appendFileSync(cleanedFilePath, JSON.stringify(cleanedSubjects, null, 2));
             console.log('Duplicates cleaned and saved to clean_subject.json.');
         } else {
             console.log('No file found. Duplicates not cleaned.');
