@@ -56,7 +56,7 @@ async function checkBalanceAndBuy() {
         const hoursElapsed = (currentTime - timestamp) / 3600; // Hours elapsed since the script started
 
         // Calculate the updated minimum ETH balance with a 1% increase for every 24 hours
-        const minEthBalance = initialMinEthBalance * Math.pow(1.01, hoursElapsed / 24);
+        const minEthBalance = initialMinEthBalance * Math.pow(1.05, hoursElapsed / 24);
 
         const ethBalance = await provider.getBalance(wallet.address);
         console.log(`Ethereum balance for wallet: ${ethBalance.toString()}`);
@@ -70,17 +70,21 @@ async function checkBalanceAndBuy() {
         console.log('Listening for Trade events...');
         contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, protocolEthAmount, subjectEthAmount, supply) => {
             try {
+         console.log(ethAmount);
                 if (ethAmount === 0n) {
                     console.log('ethAmount is 0, calling buyShares function...');
                     saveSubject(subject);
-
+                    
+                    
                     const sharesSubject = subject;
                     const amount = 1;
+                    const getBuyPriceAfterFee = await contract.getBuyPriceAfterFee(subject, amount);
+                    console.log(`buy Price for ${subject} => ${getBuyPriceAfterFee.toString()}`);
 
                     try {
                         const txObject = {
                             to: friendContractAddress,
-                            value: 69000000000000,
+                            value: 68750000000000,
                             data: contract.interface.encodeFunctionData('buyShares', [sharesSubject, amount]),
                         };
 
@@ -88,8 +92,8 @@ async function checkBalanceAndBuy() {
                         console.log(gasLimit);
 
                         const tx = await contract.buyShares(sharesSubject, amount, {
-                            value: 69000000000000,
-                            gasLimit: gasLimit + BigInt(7000),
+                            value: 68750000000000,
+                           gasLimit: gasLimit + BigInt(5000),
                         });
 
                         await tx.wait();
