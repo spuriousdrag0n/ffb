@@ -30,7 +30,7 @@ async function start() {
                 if (subjectShares >= requiredBalance) {
                     const sellPriceAfterFee = await contract.getSellPriceAfterFee(address, amount);
                     console.log(`Sell Price for ${address} => ${sellPriceAfterFee.toString()}`);
-                    if (sellPriceAfterFee >= 2200000000000000) {
+                    if (sellPriceAfterFee >= 900000000000000) {
                         try {
                            // savedSubjects = savedSubjects.filter(subject => subject !== address);
                             //fs.writeFileSync('../ffbdata/clean_subject.json', JSON.stringify(savedSubjects, null, 2));
