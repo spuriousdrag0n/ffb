@@ -3,13 +3,13 @@
 while true; do
     # Run index.js
     echo "Starting index.js..."
-    node index.js
+    node buy.js
 
     # Check if index.js exited successfully (exit code 0)
     if [ $? -eq 0 ]; then
-        echo "index.js completed successfully."
+        echo "buy.js completed successfully."
     else
-        echo "index.js crashed. Restarting..."
+        echo "buy.js crashed. Restarting..."
 
         # Wait for a moment before restarting
         sleep 10

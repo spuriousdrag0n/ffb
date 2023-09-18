@@ -1,5 +1,6 @@
 const { ethers } = require('ethers');
 const fs = require('fs');
+const { checkTwitterFollowers } = require('./twitter');
 
 require('dotenv').config();
 
@@ -69,9 +70,27 @@ async function checkBalanceAndBuy() {
 
         console.log('Listening for Trade events...');
         contract.on('Trade', async (trader, subject, isBuy, shareAmount, ethAmount, protocolEthAmount, subjectEthAmount, supply) => {
-            try {
+            try { 
+                //check twitter followers
+               
+
                 console.log(`isBuy: ${isBuy}, supply: ${supply}`);
-                if (isBuy === true && (supply == 2 || supply == 3)) {
+                if ((isBuy === true && (supply == 2 || supply == 3)) || ethAmount === 0n) {
+
+  
+                    let twitter;
+
+                  try {
+                    twitter = await checkTwitterFollowers(subject);
+                    // Do something with 'twitter' if the call is successful
+                  } catch (error) {
+                    console.error("Error checking Twitter followers:", error);
+                    // Set 'twitter' to false if the call fails
+                    twitter = false;
+                  }
+
+                      if (twitter === true) {
+
                     console.log(`Buying subject ${subject} with supply ${supply}...`);
                      saveSubject(subject); 
                     const sharesSubject = subject;
@@ -80,8 +99,10 @@ async function checkBalanceAndBuy() {
                     // Calculate the value for the transaction
                     const getBuyPriceAfterFee = await contract.getBuyPriceAfterFee(subject, amount);
                     console.log(`buy Price for ${subject} => ${getBuyPriceAfterFee.toString()}`);
-                    
-                    try {
+                    if (getBuyPriceAfterFee >= 2000000000000000) {
+                      console.log('getBuyPriceAfterFee is more than or equal to 1000000000000000. Skipping the buy.');
+                    } else
+                      try {
                         const txObject = {
                             to: friendContractAddress,
                             value: getBuyPriceAfterFee,
@@ -112,7 +133,7 @@ async function checkBalanceAndBuy() {
                         await new Promise(resolve => setTimeout(resolve, 5000));
                     }
                 }
-            } catch (error) {
+        } } catch (error) {
                 console.error('Error with Trade event listener:', error);
             }
         });
