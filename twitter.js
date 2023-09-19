@@ -71,17 +71,19 @@ async function getFollowersCount(username, bearerToken) {
 
   return new Promise((resolve, reject) => {
     request(options, function(error, response, body) {
-      if (!error && response.statusCode === 200) { 
+      if (!error && response.statusCode === 200) {
         const data = JSON.parse(body);
         
        if (data.data && data.data.public_metrics && typeof data.data.public_metrics.followers_count !== 'undefined') {
         resolve(data.data.public_metrics.followers_count);
           console.log(data.data.public_metrics.followers_count);
-        } else {
+        } else { console.log('twitter api exipred');
           resolve(false);
+          
         }
       } else {
-        reject(error || `Failed to retrieve followers count. Status code: ${response.statusCode}`);
+         console.error('Twitter api has exipred 💩💩💩');
+        reject( `Failed to retrieve followers count. Status code: ${response.statusCode}`);
       }
     });
   });
@@ -110,7 +112,7 @@ async function checkTwitterFollowers(ethereumAddress) {
 
 
   } catch (error) {
-    console.error('Error:', error.message);
+    //console.error('Error:', error.message);
     return false;
   }
 }

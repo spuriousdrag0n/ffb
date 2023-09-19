@@ -1,6 +1,7 @@
+
 const { ethers } = require('ethers');
 const fs = require('fs');
-const { checkTwitterFollowers } = require('./twitter');
+//const { checkTwitterFollowers } = require('./twitter');
 
 require('dotenv').config();
 
@@ -32,7 +33,7 @@ const friendABI = require('./ABI/friendABI.json');
 
 const contract = new ethers.Contract(friendContractAddress, friendABI, wallet);
 
-const savedSubjectsFilePath = '../ffbdata/saved_subjects.json';
+const savedSubjectsFilePath = '../ffbdata/saved_subjects2.json';
 
 async function saveSubject(subject) {
     try {
@@ -75,20 +76,21 @@ async function checkBalanceAndBuy() {
                
 
                 console.log(`isBuy: ${isBuy}, supply: ${supply}`);
-                if ((isBuy === true && supply <6) || ethAmount === 0n) {
+                if ((isBuy === true && (supply == 2 || supply == 3)) || ethAmount === 0n) {
 
   
-                    let twitter;
+                    //let twitter;
 
-                  try {
-                    twitter = await checkTwitterFollowers(subject);
+                //  try {
+                //    twitter = await checkTwitterFollowers(subject);
                     // Do something with 'twitter' if the call is successful
-                  } catch (error) {
-                    console.log("Error checking Twitter followers:", error);
+                  //} catch (error) {
+                    //console.error("Error checking Twitter followers:", error);
                     // Set 'twitter' to false if the call fails
-                    twitter = false;
-                  }
-                      if (twitter === true) {
+                    //twitter = false;
+                  //}
+
+                     // if (twitter === true) {
 
                     console.log(`Buying subject ${subject} with supply ${supply}...`);
                      saveSubject(subject); 
@@ -98,7 +100,7 @@ async function checkBalanceAndBuy() {
                     // Calculate the value for the transaction
                     const getBuyPriceAfterFee = await contract.getBuyPriceAfterFee(subject, amount);
                     console.log(`buy Price for ${subject} => ${getBuyPriceAfterFee.toString()}`);
-                    if (getBuyPriceAfterFee >= 2600000000000000) {
+                    if (getBuyPriceAfterFee >= 2000000000000000) {
                       console.log('getBuyPriceAfterFee is more than or equal to 1000000000000000. Skipping the buy.');
                     } else
                       try {
@@ -131,7 +133,7 @@ async function checkBalanceAndBuy() {
                         console.error('Error calling buyShares:', error);
                         await new Promise(resolve => setTimeout(resolve, 5000));
                     }
-                }
+               // }
         } } catch (error) {
                 console.error('Error with Trade event listener:', error);
             }
@@ -143,4 +145,3 @@ async function checkBalanceAndBuy() {
 }
 
 checkBalanceAndBuy();
-
