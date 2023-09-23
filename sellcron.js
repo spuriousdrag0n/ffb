@@ -14,23 +14,28 @@ function runScript(scriptName, callback) {
             console.log(`Retrying ${scriptName}...`);
             runScript(scriptName, callback); // Retry
         } else {
+            // Log the output of sell.js to the console
             console.log(`Output of ${scriptName}: ${stdout}`);
+            
             // Create a log file for successful run
             fs.writeFileSync(logFilePath, `${new Date()}: ${scriptName} completed successfully\n`, { flag: 'a' });
+            
             callback(); // Execute the next script
         }
     });
+
+    // Pipe the child process stdout and stderr to the parent process
+    child.stdout.pipe(process.stdout);
+    child.stderr.pipe(process.stderr);
 }
 
-// Schedule your script to run every 3 hours
-cron.schedule('0 */3 * * *', () => {
-    console.log('Running scheduled task...');
-    
-    // Run scripts in a specific order
-    runScript('clear_subjects.js', () => {
-        runScript('sell.js', () => {
-            console.log('All scripts completed.');
-        });
-    });
-});
+console.log('Running scheduled task...');
 
+// Run scripts in a specific orderi
+cron.schedule('0 */3 * * *', () => {
+runScript('clear_subjects.js', () => {
+    runScript('sell.js', () => {
+        console.log('All scripts completed.');
+    });
+   });
+});
